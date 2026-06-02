@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Diario de Comidas · Lorena Solarte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --rosa-fondo: #fff5f8;
+    --rosa-suave: #ffe3ec;
+    --rosa-medio: #ffc2d6;
+    --rosa-fuerte: #ff9ebb;
+    --rosa-acento: #ff7aa2;
+    --vino: #b65a78;
+    --texto: #7a4a59;
+    --texto-suave: #a87b89;
+    --crema: #fffaf6;
+    --dorado: #e9b97a;
+    --sombra: 0 18px 40px -18px rgba(255,122,162,.55);
+    --sombra-suave: 0 8px 24px -12px rgba(255,122,162,.4);
+    --cielo: #d8b4f0;
+    --glow: 0 0 18px rgba(255,158,187,.7);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+
+  body{
+    font-family:'Quicksand',sans-serif;
+    color:var(--texto);
+    background:
+      radial-gradient(circle at 50% 0%, rgba(216,180,240,.35) 0%, transparent 55%),
+      radial-gradient(circle at 12% 18%, #ffe0ec 0%, transparent 42%),
+      radial-gradient(circle at 88% 8%, #ffeaf2 0%, transparent 40%),
+      radial-gradient(circle at 80% 92%, #ffd9e6 0%, transparent 45%),
+      radial-gradient(circle at 18% 88%, #fff0d9 0%, transparent 40%),
+      linear-gradient(160deg, #fff7fa 0%, #fbeeff 100%);
+    background-attachment:fixed;
+    min-height:100vh;
+    padding:28px 16px 60px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* destellos y estrellitas anime */
+  .deco{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
+  .deco span{position:absolute;font-size:22px;opacity:.55;animation:flotar 14s ease-in-out infinite;filter:drop-shadow(0 0 6px rgba(255,158,187,.6));}
+  .deco span:nth-child(1){left:6%;top:20%;animation-delay:0s;}
+  .deco span:nth-child(2){left:90%;top:35%;font-size:16px;animation-delay:2s;}
+  .deco span:nth-child(3){left:80%;top:70%;animation-delay:4s;}
+  .deco span:nth-child(4){left:14%;top:75%;font-size:18px;animation-delay:6s;}
+  .deco span:nth-child(5){left:48%;top:6%;font-size:14px;animation-delay:3s;}
+  .deco span:nth-child(6){left:30%;top:50%;font-size:13px;animation-delay:5s;}
+  @keyframes flotar{0%,100%{transform:translateY(0) rotate(-6deg);}50%{transform:translateY(-22px) rotate(8deg);}}
+
+  /* estrellitas titilantes estilo anime */
+  .estrellas{position:fixed;inset:0;pointer-events:none;z-index:0;}
+  .estrellas i{position:absolute;color:#fff;text-shadow:0 0 8px #ffb8d2,0 0 14px #d8b4f0;font-style:normal;animation:titilar 2.6s ease-in-out infinite;}
+  @keyframes titilar{0%,100%{opacity:.25;transform:scale(.7);}50%{opacity:1;transform:scale(1.15);}}
+
+  /* pétalos de sakura cayendo */
+  .petalos{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
+  .petalos b{position:absolute;top:-30px;font-style:normal;opacity:.8;animation:caer linear infinite;}
+  @keyframes caer{
+    0%{transform:translateY(-30px) translateX(0) rotate(0);opacity:0;}
+    10%{opacity:.85;}
+    100%{transform:translateY(105vh) translateX(60px) rotate(360deg);opacity:0;}
+  }
+
+  .wrap{max-width:560px;margin:0 auto;position:relative;z-index:1;}
+
+  /* ENCABEZADO */
+  header{text-align:center;margin-bottom:24px;animation:aparecer .8s ease both;}
+  .saludo{font-family:'Fraunces',serif;font-size:.95rem;letter-spacing:.18em;text-transform:uppercase;color:var(--rosa-acento);font-weight:600;}
+  .saludo::before{content:'✦ ';}
+  .saludo::after{content:' ✦';}
+  .nombre{font-family:'Dancing Script',cursive;font-weight:700;font-size:3.5rem;line-height:1;color:var(--vino);margin:2px 0 6px;text-shadow:0 0 18px rgba(216,180,240,.6),0 4px 14px rgba(255,122,162,.4);}
+  .subtitulo{font-style:italic;font-family:'Fraunces',serif;color:var(--texto-suave);font-size:1rem;}
+
+  .fecha-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:16px;}
+  .fecha-nav button{
+    border:none;background:var(--crema);width:38px;height:38px;border-radius:50%;
+    font-size:1.1rem;color:var(--rosa-acento);cursor:pointer;box-shadow:var(--sombra-suave);
+    transition:transform .2s, background .2s;
+  }
+  .fecha-nav button:hover{transform:scale(1.12);background:var(--rosa-suave);}
+  .fecha-actual{font-weight:600;text-transform:capitalize;min-width:185px;text-align:center;font-size:.98rem;}
+
+  /* FRASE MOTIVACIONAL */
+  .frase{
+    background:linear-gradient(135deg, #fff 0%, #fdf2ff 100%);
+    border-radius:26px;padding:24px 26px;margin:22px 0;text-align:center;
+    box-shadow:var(--sombra),0 0 30px -8px rgba(216,180,240,.5);position:relative;
+    border:1.5px solid #f3d9ff;animation:aparecer .9s .1s ease both;
+  }
+  .frase::before{content:'❝';position:absolute;top:-6px;left:18px;font-size:2.6rem;color:var(--rosa-medio);font-family:'Fraunces',serif;}
+  .frase .etq{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--rosa-acento);font-weight:700;margin-bottom:8px;display:block;}
+  .frase p{font-family:'Fraunces',serif;font-size:1.18rem;font-style:italic;color:var(--vino);}
+  .frase .flor{margin-top:10px;font-size:1.1rem;}
+
+  /* BARRA DE PROGRESO */
+  .progreso-card{
+    background:#fff;border-radius:22px;padding:18px 22px;margin-bottom:22px;
+    box-shadow:var(--sombra-suave);border:1.5px solid #ffe7ef;
+    display:flex;align-items:center;gap:18px;animation:aparecer .9s .2s ease both;
+  }
+  .anillo{position:relative;width:64px;height:64px;flex-shrink:0;}
+  .anillo svg{transform:rotate(-90deg);}
+  .anillo .num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem;color:var(--vino);}
+  .progreso-txt{flex:1;}
+  .progreso-txt b{font-family:'Fraunces',serif;font-size:1.05rem;color:var(--vino);display:block;}
+  .progreso-txt small{color:var(--texto-suave);}
+  .racha{text-align:center;flex-shrink:0;}
+  .racha .fuego{font-size:1.5rem;}
+  .racha b{display:block;font-size:1.3rem;color:var(--rosa-acento);font-family:'Fraunces',serif;line-height:1;}
+  .racha small{color:var(--texto-suave);font-size:.7rem;}
+
+  /* COMIDAS */
+  .comida{
+    background:#fff;border-radius:24px;padding:18px;margin-bottom:16px;
+    box-shadow:var(--sombra-suave);border:1.5px solid #ffe7ef;
+    transition:transform .25s, box-shadow .25s, border-color .25s;
+    animation:aparecer .9s ease both;
+  }
+  .comida.lista{border-color:var(--rosa-fuerte);box-shadow:0 14px 30px -16px rgba(255,122,162,.6);background:linear-gradient(135deg,#fff 0%,#fff6fa 100%);}
+  .comida:nth-child(1){animation-delay:.25s;}
+  .comida:nth-child(2){animation-delay:.32s;}
+  .comida:nth-child(3){animation-delay:.39s;}
+  .comida:nth-child(4){animation-delay:.46s;}
+  .comida:nth-child(5){animation-delay:.53s;}
+
+  .comida-top{display:flex;align-items:center;gap:12px;}
+  .emoji{font-size:1.7rem;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:var(--rosa-fondo);border-radius:16px;flex-shrink:0;}
+  .comida.lista .emoji{background:var(--rosa-suave);}
+  .comida-info{flex:1;min-width:0;}
+  .comida-info h3{font-family:'Fraunces',serif;font-size:1.12rem;color:var(--vino);font-weight:600;}
+  .comida-info span{font-size:.82rem;color:var(--texto-suave);}
+
+  .check{
+    width:42px;height:42px;border-radius:50%;border:2.5px solid var(--rosa-medio);
+    background:#fff;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+    font-size:1.2rem;color:#fff;transition:all .25s;
+  }
+  .check:hover{transform:scale(1.08);border-color:var(--rosa-acento);}
+  .comida.lista .check{background:var(--rosa-acento);border-color:var(--rosa-acento);transform:scale(1);}
+  .comida.lista .check::after{content:'✓';animation:pop .35s ease;}
+  @keyframes pop{0%{transform:scale(0);}70%{transform:scale(1.3);}100%{transform:scale(1);}}
+
+  /* FOTO */
+  .foto-zona{margin-top:14px;}
+  .foto-label{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    border:2px dashed var(--rosa-medio);border-radius:18px;padding:16px;
+    cursor:pointer;color:var(--rosa-acento);font-weight:600;font-size:.9rem;
+    transition:background .2s, border-color .2s;background:var(--rosa-fondo);
+  }
+  .foto-label:hover{background:var(--rosa-suave);border-color:var(--rosa-acento);}
+  .foto-zona input{display:none;}
+  .foto-preview{position:relative;border-radius:18px;overflow:hidden;box-shadow:var(--sombra-suave);}
+  .foto-preview img{width:100%;display:block;max-height:300px;object-fit:cover;}
+  .foto-borrar{
+    position:absolute;top:10px;right:10px;background:rgba(255,255,255,.92);
+    border:none;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:1rem;
+    color:var(--rosa-acento);box-shadow:var(--sombra-suave);transition:transform .2s;
+  }
+  .foto-borrar:hover{transform:scale(1.1) rotate(8deg);}
+  .hidden{display:none;}
+
+  /* PIE */
+  footer{text-align:center;margin-top:30px;color:var(--texto-suave);font-size:.85rem;}
+  .reset-btn{
+    background:none;border:1.5px solid var(--rosa-medio);color:var(--rosa-acento);
+    padding:8px 18px;border-radius:20px;cursor:pointer;font-family:'Quicksand';font-weight:600;
+    font-size:.82rem;margin-top:8px;transition:background .2s;
+  }
+  .reset-btn:hover{background:var(--rosa-suave);}
+  .corazon{color:var(--rosa-acento);}
+  .aviso{font-size:.78rem;margin-top:14px;opacity:.8;}
+
+  @keyframes aparecer{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:none;}}
+
+  @media(max-width:420px){
+    .nombre{font-size:2.9rem;}
+    .frase p{font-size:1.05rem;}
+    .fecha-actual{min-width:150px;font-size:.88rem;}
+  }
+</style>
+</head>
+<body>
+<div class="deco"><span>✨</span><span>⭐</span><span>🌸</span><span>💫</span><span>🎀</span><span>🌟</span></div>
+<div class="estrellas" id="estrellas"></div>
+<div class="petalos" id="petalos"></div>
+
+<div class="wrap">
+  <header>
+    <div class="saludo">Hola, hermosa</div>
+    <div class="nombre">Lorena Solarte</div>
+    <div class="subtitulo">Mi diario de comidas kawaii ✧･ﾟ</div>
+    <div class="fecha-nav">
+      <button id="prevDia" title="Día anterior">‹</button>
+      <div class="fecha-actual" id="fechaActual"></div>
+      <button id="nextDia" title="Día siguiente">›</button>
+    </div>
+  </header>
+
+  <div class="frase">
+    <span class="etq">Frase del día</span>
+    <p id="fraseTexto"></p>
+    <div class="flor">🌷</div>
+  </div>
+
+  <div class="progreso-card">
+    <div class="anillo">
+      <svg width="64" height="64" viewBox="0 0 64 64">
+        <circle cx="32" cy="32" r="27" fill="none" stroke="#ffe3ec" stroke-width="7"/>
+        <circle id="anilloProg" cx="32" cy="32" r="27" fill="none" stroke="#ff7aa2" stroke-width="7"
+                stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="169.6"
+                style="transition:stroke-dashoffset .6s ease;"/>
+      </svg>
+      <div class="num" id="progNum">0/5</div>
+    </div>
+    <div class="progreso-txt">
+      <b id="progTitulo">¡Empecemos el día!</b>
+      <small id="progSub">Marca tus comidas y sube tu foto 💕</small>
+    </div>
+    <div class="racha">
+      <div class="fuego">🔥</div>
+      <b id="rachaNum">0</b>
+      <small id="rachaLbl">días</small>
+    </div>
+  </div>
+
+  <div id="comidas"></div>
+
+  <footer>
+    <button class="reset-btn" id="resetDia">Borrar registro de este día</button>
+    <div class="aviso" id="aviso"></div>
+  </footer>
+</div>
+
+<script type="module">
+/* ============================================================
+   CONEXIÓN A FIREBASE (Firestore)
+   👉 Pega aquí la configuración de TU proyecto de Firebase.
+      La encuentras en: Firebase Console → ⚙ Configuración del proyecto
+      → "Tus apps" → app web → Configuración del SDK → Config.
+   Si dejas los campos vacíos, la app igual funciona guardando
+   solo en este dispositivo (sin nube).
+   ============================================================ */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: ""
+};
+
+let db = null;
+const usarFirebase = !!(firebaseConfig.projectId && firebaseConfig.apiKey);
+if (usarFirebase) {
+  try {
+    const app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+  } catch (e) { console.warn("No se pudo iniciar Firebase:", e); }
+}
+
+/* ----- decoración anime: estrellitas y pétalos ----- */
+(function(){
+  const est=document.getElementById("estrellas");
+  const simbolos=["✦","✧","⭐","✩","˚"];
+  for(let i=0;i<26;i++){
+    const s=document.createElement("i");
+    s.textContent=simbolos[Math.floor(Math.random()*simbolos.length)];
+    s.style.left=Math.random()*100+"%";
+    s.style.top=Math.random()*100+"%";
+    s.style.fontSize=(8+Math.random()*14)+"px";
+    s.style.animationDelay=(Math.random()*2.6)+"s";
+    est.appendChild(s);
+  }
+  const pet=document.getElementById("petalos");
+  const flores=["🌸","🌷","💮","✿"];
+  for(let i=0;i<12;i++){
+    const p=document.createElement("b");
+    p.textContent=flores[Math.floor(Math.random()*flores.length)];
+    p.style.left=Math.random()*100+"%";
+    p.style.fontSize=(12+Math.random()*12)+"px";
+    p.style.animationDuration=(8+Math.random()*9)+"s";
+    p.style.animationDelay=(Math.random()*10)+"s";
+    pet.appendChild(p);
+  }
+})();
+
+const FRASES = [
+  "Cada pequeño paso te acerca a tu mejor versión, Lorena.",
+  "Todo es un proceso, y el tuyo va por buen camino.",
+  "No tienes que ser perfecta hoy, solo amable contigo misma.",
+  "Lo que riegas con constancia, florece.",
+  "Cuidarte es una de las formas más bonitas de quererte.",
+  "Hoy también cuenta. Cada día suma.",
+  "Los días lentos también son parte del avance.",
+  "Confía en el proceso, incluso cuando no veas los resultados aún.",
+  "Eres más fuerte de lo que crees y más capaz de lo que imaginas.",
+  "Tu cuerpo merece cariño, paciencia y buena comida.",
+  "Lo importante no es ir rápido, sino no soltarte.",
+  "Cada comida es una oportunidad de cuidarte un poquito más.",
+  "El progreso no siempre se ve, pero siempre cuenta.",
+  "Sé paciente contigo; estás aprendiendo y eso es valioso.",
+  "Hoy es un buen día para empezar de nuevo si lo necesitas.",
+  "Las raíces crecen en silencio antes de que se vea la flor.",
+  "Tu ritmo es perfecto para ti.",
+  "Date el permiso de mejorar sin exigirte de más.",
+  "Lo que haces por ti hoy, tu yo del futuro lo agradecerá.",
+  "Eres un trabajo en proceso, y eso es algo hermoso.",
+  "Avanzar un poquito sigue siendo avanzar.",
+  "No estás atrasada; estás justo donde debes estar.",
+  "Respira. Lo estás haciendo mejor de lo que piensas.",
+  "Quererte también es alimentarte con calma y cariño.",
+  "Los cambios reales toman tiempo, y tú tienes ese tiempo.",
+  "Celebra lo que sí lograste hoy.",
+  "Tu constancia vale más que la perfección.",
+  "Mereces cuidarte sin culpa.",
+  "Cada amanecer trae una nueva página para escribir.",
+  "Lo que hoy te cuesta, mañana será costumbre.",
+  "Sé tu propia aliada, no tu crítica.",
+  "El bienestar se construye día a día, sin prisa.",
+  "Hoy elige algo que te haga sentir bien.",
+  "Tu esfuerzo importa, aunque nadie más lo vea.",
+  "Las mejores versiones de nosotras se construyen despacio.",
+  "No compares tu proceso con el de nadie más.",
+  "Tienes derecho a descansar y también a seguir.",
+  "Cada elección amable contigo misma cuenta.",
+  "La constancia suave también mueve montañas.",
+  "Eres suficiente, hoy y siempre.",
+  "Sigue adelante, paso a pasito.",
+  "Hoy mereces nutrirte y consentirte.",
+  "Las cosas mejoran cuando te tratas con dulzura.",
+  "Tu camino es único y va hacia algo bueno.",
+  "Lo que empieza hoy, florece después.",
+  "No te rindas; el proceso ya empezó a darte frutos.",
+  "Eres capaz de cosas preciosas, una a la vez.",
+  "Tu cuerpo te acompaña siempre; cuídalo con amor.",
+  "Cada día es una semillita de tu bienestar.",
+  "Hazlo con calma, pero no te detengas.",
+  "Lo perfecto puede esperar; lo importante es seguir.",
+  "Mereces sentirte orgullosa de tu constancia.",
+  "Hoy es otra oportunidad de cuidarte bonito.",
+  "Confía: vas mejorando aunque a veces no lo notes.",
+  "El amor propio también se nota en los pequeños hábitos.",
+  "Tu progreso no tiene que ser lineal para ser real.",
+  "Eres la flor y la jardinera de tu propia vida.",
+  "Date crédito por todo lo que ya has avanzado.",
+  "Hoy puedes elegir verte con más ternura.",
+  "Todo es un proceso, y el tuyo siempre va a mejorar."
+];
+
+const COMIDAS = [
+  {id:"desayuno",   nombre:"Desayuno",      hora:"Para empezar con energía",   emoji:"🌅"},
+  {id:"mediamanana",nombre:"Media mañana",  hora:"Un antojito saludable",      emoji:"🍓"},
+  {id:"almuerzo",   nombre:"Almuerzo",      hora:"El plato principal del día",  emoji:"🍽️"},
+  {id:"onces",      nombre:"Onces",         hora:"La merienda de la tarde",     emoji:"☕"},
+  {id:"cena",       nombre:"Cena",          hora:"Para cerrar el día rico",     emoji:"🌙"}
+];
+
+const STORAGE_PREFIX = "lorena_comidas_";
+let fechaVista = new Date();
+let memoriaSinStorage = {}; // respaldo si localStorage no está disponible
+const cacheDias = {};       // datos en memoria por fecha (clave -> objeto)
+
+/* ---------- utilidades de fecha ---------- */
+function claveFecha(d){
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function diasDesdeEpoca(d){
+  return Math.floor(d.getTime()/86400000);
+}
+function esHoy(d){ return claveFecha(d)===claveFecha(new Date()); }
+
+/* ---------- guardado (caché + localStorage + Firebase) ---------- */
+function leerDia(clave){
+  if(cacheDias[clave]) return cacheDias[clave];
+  try{
+    const v = localStorage.getItem(STORAGE_PREFIX+clave);
+    const o = v ? JSON.parse(v) : {};
+    cacheDias[clave]=o;
+    return o;
+  }catch(e){
+    return cacheDias[clave] = (memoriaSinStorage[clave] || {});
+  }
+}
+
+function guardarDia(clave,datos){
+  cacheDias[clave]=datos;
+  // 1) copia local (respaldo y modo offline)
+  try{
+    localStorage.setItem(STORAGE_PREFIX+clave, JSON.stringify(datos));
+  }catch(e){
+    memoriaSinStorage[clave]=datos;
+    if(e && (e.name==="QuotaExceededError" || (""+e).indexOf("quota")>-1)){
+      document.getElementById("aviso").textContent="💗 La memoria del dispositivo está llena. Borra registros antiguos para liberar espacio.";
+    }
+  }
+  // 2) nube
+  if(usarFirebase && db){
+    setDoc(doc(db,"dias",clave), datos).catch(e=>console.warn("Firestore (guardar):",e));
+  }
+}
+
+// baja desde la nube los datos de un día y actualiza la caché
+async function sincronizarDia(clave){
+  if(!(usarFirebase && db)) return;
+  try{
+    const snap = await getDoc(doc(db,"dias",clave));
+    cacheDias[clave] = snap.exists() ? snap.data() : {};
+    try{ localStorage.setItem(STORAGE_PREFIX+clave, JSON.stringify(cacheDias[clave])); }catch(e){}
+  }catch(e){ console.warn("Firestore (leer):",e); }
+}
+
+// muestra un día: pinta al instante con la caché y luego refresca con la nube
+async function irADia(){
+  render();
+  const clave = claveFecha(fechaVista);
+  if(usarFirebase && db){
+    await sincronizarDia(clave);
+    render();
+  }
+}
+
+/* ---------- compresión de fotos ---------- */
+function comprimirImagen(file, cb){
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    const img = new Image();
+    img.onload = function(){
+      const maxDim = 500;
+      let {width,height} = img;
+      if(width>height && width>maxDim){ height=height*maxDim/width; width=maxDim; }
+      else if(height>maxDim){ width=width*maxDim/height; height=maxDim; }
+      const canvas = document.createElement("canvas");
+      canvas.width=width; canvas.height=height;
+      canvas.getContext("2d").drawImage(img,0,0,width,height);
+      cb(canvas.toDataURL("image/jpeg",0.55));
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ---------- racha ---------- */
+function calcularRacha(){
+  let racha=0;
+  let d=new Date();
+  // si hoy aún no tiene nada, la racha cuenta desde ayer
+  if(contarComidas(leerDia(claveFecha(d)))===0){ d.setDate(d.getDate()-1); }
+  for(let i=0;i<400;i++){
+    if(contarComidas(leerDia(claveFecha(d)))>0){ racha++; d.setDate(d.getDate()-1); }
+    else break;
+  }
+  return racha;
+}
+function contarComidas(datos){
+  return COMIDAS.filter(c=>datos[c.id]&&datos[c.id].hecho).length;
+}
+
+/* ---------- render ---------- */
+function render(){
+  const clave = claveFecha(fechaVista);
+  const datos = leerDia(clave);
+
+  // fecha bonita
+  const opts={weekday:"long",day:"numeric",month:"long"};
+  let txt = fechaVista.toLocaleDateString("es-CO",opts);
+  if(esHoy(fechaVista)) txt = "Hoy · "+txt;
+  document.getElementById("fechaActual").textContent = txt;
+  // no permitir ir al futuro
+  document.getElementById("nextDia").style.visibility = esHoy(fechaVista) ? "hidden":"visible";
+
+  // frase del día (estable por fecha)
+  const idx = ((diasDesdeEpoca(fechaVista) % FRASES.length)+FRASES.length)%FRASES.length;
+  document.getElementById("fraseTexto").textContent = FRASES[idx];
+
+  // comidas
+  const cont = document.getElementById("comidas");
+  cont.innerHTML="";
+  COMIDAS.forEach(c=>{
+    const estado = datos[c.id] || {};
+    const hecho = !!estado.hecho;
+    const foto = estado.foto;
+
+    const card = document.createElement("div");
+    card.className = "comida"+(hecho?" lista":"");
+    card.innerHTML = `
+      <div class="comida-top">
+        <div class="emoji">${c.emoji}</div>
+        <div class="comida-info">
+          <h3>${c.nombre}</h3>
+          <span>${c.hora}</span>
+        </div>
+        <button class="check" data-id="${c.id}" title="Marcar"></button>
+      </div>
+      <div class="foto-zona">
+        <label class="foto-label ${foto?'hidden':''}" data-id="${c.id}">
+          📷 Subir foto de mi ${c.nombre.toLowerCase()}
+          <input type="file" accept="image/*" data-id="${c.id}">
+        </label>
+        <div class="foto-preview ${foto?'':'hidden'}">
+          ${foto?`<img src="${foto}" alt="${c.nombre}"><button class="foto-borrar" data-id="${c.id}" title="Quitar foto">✕</button>`:''}
+        </div>
+      </div>`;
+    cont.appendChild(card);
+  });
+
+  // progreso
+  const hechas = contarComidas(datos);
+  document.getElementById("progNum").textContent = hechas+"/5";
+  const offset = 169.6 - (169.6*hechas/5);
+  document.getElementById("anilloProg").style.strokeDashoffset = offset;
+  const titulos=["¡Empecemos el día!","¡Buen comienzo! 🌷","¡Vas muy bien! 💕","¡Casi lo logras! ✨","¡Falta una! 🌟","¡Día completo! 🎉"];
+  document.getElementById("progTitulo").textContent = titulos[hechas];
+  document.getElementById("progSub").textContent = hechas===5 ? "Hoy te cuidaste precioso, Lorena 💗" : "Marca tus comidas y sube tu foto 💕";
+
+  // racha
+  const r = calcularRacha();
+  document.getElementById("rachaNum").textContent = r;
+  document.getElementById("rachaLbl").textContent = r===1?"día":"días";
+
+  enlazarEventos(clave);
+}
+
+function enlazarEventos(clave){
+  // marcar comida
+  document.querySelectorAll(".check").forEach(btn=>{
+    btn.onclick=()=>{
+      const datos=leerDia(clave);
+      const id=btn.dataset.id;
+      datos[id]=datos[id]||{};
+      datos[id].hecho=!datos[id].hecho;
+      guardarDia(clave,datos);
+      render();
+    };
+  });
+  // subir foto
+  document.querySelectorAll('.foto-zona input').forEach(inp=>{
+    inp.onchange=(e)=>{
+      const file=e.target.files[0];
+      if(!file) return;
+      comprimirImagen(file,(dataUrl)=>{
+        const datos=leerDia(clave);
+        const id=inp.dataset.id;
+        datos[id]=datos[id]||{};
+        datos[id].foto=dataUrl;
+        if(!datos[id].hecho) datos[id].hecho=true; // al subir foto, se marca
+        guardarDia(clave,datos);
+        render();
+      });
+    };
+  });
+  // borrar foto
+  document.querySelectorAll('.foto-borrar').forEach(btn=>{
+    btn.onclick=()=>{
+      const datos=leerDia(clave);
+      const id=btn.dataset.id;
+      if(datos[id]) delete datos[id].foto;
+      guardarDia(clave,datos);
+      render();
+    };
+  });
+}
+
+/* ---------- navegación ---------- */
+document.getElementById("prevDia").onclick=()=>{ fechaVista.setDate(fechaVista.getDate()-1); irADia(); };
+document.getElementById("nextDia").onclick=()=>{ if(!esHoy(fechaVista)){ fechaVista.setDate(fechaVista.getDate()+1); irADia(); } };
+document.getElementById("resetDia").onclick=()=>{
+  if(confirm("¿Seguro que quieres borrar el registro de este día?")){
+    const clave=claveFecha(fechaVista);
+    cacheDias[clave]={};
+    try{ localStorage.removeItem(STORAGE_PREFIX+clave); }catch(e){ delete memoriaSinStorage[clave]; }
+    if(usarFirebase && db){ deleteDoc(doc(db,"dias",clave)).catch(e=>console.warn("Firestore (borrar):",e)); }
+    render();
+  }
+};
+
+irADia();
+</script>
+</body>
+</html>
