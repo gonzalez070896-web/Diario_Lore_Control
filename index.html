@@ -369,6 +369,7 @@ const COMIDAS = [
 
 const STORAGE_PREFIX = "lorena_comidas_";
 let fechaVista = new Date();
+let fraseActual = FRASES[Math.floor(Math.random()*FRASES.length)]; // nueva frase en cada recarga
 let memoriaSinStorage = {}; // respaldo si localStorage no está disponible
 const cacheDias = {};       // datos en memoria por fecha (clave -> objeto)
 
@@ -480,9 +481,8 @@ function render(){
   // no permitir ir al futuro
   document.getElementById("nextDia").style.visibility = esHoy(fechaVista) ? "hidden":"visible";
 
-  // frase del día (estable por fecha)
-  const idx = ((diasDesdeEpoca(fechaVista) % FRASES.length)+FRASES.length)%FRASES.length;
-  document.getElementById("fraseTexto").textContent = FRASES[idx];
+  // frase motivacional (cambia en cada recarga de la página)
+  document.getElementById("fraseTexto").textContent = fraseActual;
 
   // comidas
   const cont = document.getElementById("comidas");
